@@ -1,13 +1,21 @@
 import {  useRef } from "react";
-import { CameraHelper, Color, OrthographicCamera } from "three";
+import { CameraHelper, Color, Group, OrthographicCamera } from "three";
 import { Trees } from "./Trees";
 import { useHelper } from '@react-three/drei'
 import { Capybara } from "./Capybara";
+import { useFrame } from "@react-three/fiber";
 
 export function Scene() {
     const ref = useRef<OrthographicCamera>(null!);
+    const capRef = useRef<Group>(null!)
     useHelper(ref, CameraHelper)
 
+    useFrame(()=>{
+
+        if(capRef.current){
+            capRef.current.rotateY(0.01)
+        }
+    })
 
     return (<>
         <ambientLight intensity={0.1} />
@@ -37,7 +45,7 @@ export function Scene() {
                     new Color('#754212').convertLinearToSRGB()
             ]}
         />
-        <Capybara position={[8 ,0, -4]}/>
+        <Capybara ref={capRef} position={[8 ,0, -4]}/>
         <Trees
             position={[8 ,0, 4]}
             colors={[

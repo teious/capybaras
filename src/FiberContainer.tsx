@@ -1,5 +1,5 @@
 import { Canvas } from '@react-three/fiber';
-import { OrbitControls } from '@react-three/drei';
+import { OrbitControls, Stats } from '@react-three/drei';
 import { Scene } from './scene/Scene';
 import { Ground } from './scene/Ground';
 export function FiberContainer() {
@@ -12,6 +12,7 @@ export function FiberContainer() {
               <OrbitControls minDistance={1} maxDistance={200}/>
             <Scene />
             <Ground />
+            <Stats/>
         </Canvas>
     )
 }
