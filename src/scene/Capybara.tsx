@@ -1,20 +1,32 @@
-import { useGLTF } from "@react-three/drei";
-import { GroupProps } from "@react-three/fiber";
-import { ForwardedRef, forwardRef, useMemo } from "react";
-import { BackSide, Color, FrontSide, Group, Mesh, Vector3 } from "three";
+import { useAnimations, useGLTF } from "@react-three/drei";
+import { GroupProps, useFrame } from "@react-three/fiber";
+import { ForwardedRef, forwardRef, useEffect, useMemo, useRef } from "react";
+import { AnimationMixer, BackSide, Color, FrontSide, Group, Mesh, SkinnedMesh, Vector3 } from "three";
 import { GLTF } from "three/examples/jsm/loaders/GLTFLoader";
 import { GhibliShader } from "../shaders/GhibliShader";
 import { OutlineMaterial, OutlineShader } from "../shaders/OutlineShader";
 
 type CapybaraGLTFResult = GLTF & {
     nodes: {
-        Capybara: Mesh
+        Capybara: SkinnedMesh;
+        [prop: string]: any
     }
 }
 
-export const Capybara= forwardRef((props: GroupProps,  ref: ForwardedRef<Group>)=>{
-    const { nodes }= useGLTF("/models/cap.glb")  as CapybaraGLTFResult;
-    const uniforms = useMemo(()=>{
+export const Capybara = forwardRef((props: GroupProps, ref: ForwardedRef<Group>) => {
+    const data = useGLTF("/models/cap.glb") as CapybaraGLTFResult;
+    const innerRef = useRef()
+    const { nodes } = data
+    console.log(data)
+    const { actions } = useAnimations(nodes.animations, innerRef as any)
+
+    // const { Capybara, } = nodes
+    // useEffect(() => {
+    //     if (actions) {
+    //         actions['Walk']?.play()
+    //     }
+    // }, [actions]);
+    const uniforms = useMemo(() => {
         return {
             colorMap: {
                 value: [
@@ -25,31 +37,32 @@ export const Capybara= forwardRef((props: GroupProps,  ref: ForwardedRef<Group>)
                 ]
             },
             brightnessThresholds: {
-                value: [ 0.9, 0.35, 0.001],
+                value: [0.9, 0.35, 0.001],
             },
             lightPosition: {
-                value: new Vector3(15,15,15)
+                value: new Vector3(15, 15, 15)
             }
-    }},[])
-    
+        }
+    }, [])
 
-    return   <group ref={ref} {...props} dispose={null}>
-    <mesh
-        castShadow
-        receiveShadow
-        geometry={nodes.Capybara.geometry}
-        scale={0.5}
-        position={[0.33, -1.5, -0.68]}
-        >
-            <shaderMaterial {...GhibliShader} uniforms={uniforms} side={FrontSide}/>
-    </mesh>
-    <mesh 
-        geometry={nodes.Capybara.geometry}
-        scale={0.5}
-        position={[0.33, -1.5, -0.68]}
-        >
-        <OutlineMaterial/>
-    </mesh>
-</group>
+
+    return <>
+        <group ref={innerRef as any} {...props} dispose={null} >
+            <skinnedMesh
+                castShadow
+                receiveShadow
+                geometry={nodes.Capybara.geometry}
+                skeleton={nodes.Capybara.skeleton}
+
+            >
+                <shaderMaterial {...GhibliShader} uniforms={uniforms} side={FrontSide} />
+            </skinnedMesh>
+            <mesh
+                geometry={nodes.Capybara.geometry}
+            >
+                <OutlineMaterial />
+            </mesh>
+        </group>
+    </>
 })
 useGLTF.preload("/models/cap.glb");

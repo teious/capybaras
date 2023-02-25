@@ -8,11 +8,11 @@ export function FiberContainer() {
     return (
         <Canvas
             camera={{ position: [14.46666, 2.0365, 5.556165], fov: 40, top: 50, bottom: -50, left: -50, right: 50 }}
-            shadows>
-              <OrbitControls minDistance={1} maxDistance={200}/>
+            shadows >
+            <OrbitControls minDistance={1} maxDistance={200} />
             <Scene />
             <Ground />
-            <Stats/>
+            <Stats />
         </Canvas>
     )
 }
