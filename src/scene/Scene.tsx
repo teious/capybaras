@@ -4,7 +4,6 @@ import { Trees } from "./Trees";
 import { useHelper } from '@react-three/drei'
 import { Capybara } from "./Capybara";
 import { useFrame } from "@react-three/fiber";
-import { Model } from "./Cap2";
 
 export function Scene() {
     const ref = useRef<OrthographicCamera>(null!);
@@ -46,8 +45,7 @@ export function Scene() {
                 new Color('#754212').convertLinearToSRGB()
             ]}
         />
-        <Model position={[8, -3, -4]} />
-        {/* <Capybara ref={capRef} position={[8, 0, -4]} /> */}
+        <Capybara position={[8, -3, -4]} />
         <Trees
             position={[8, 0, 4]}
             colors={[
